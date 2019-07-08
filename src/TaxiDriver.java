@@ -9,19 +9,8 @@ public class TaxiDriver {
         this.isFree = true;
     }
 
-    public void completeOrder(Order order) {
-        if(isFree) {
-            isFree = false;
-            order.setStatus(Status.ACCEPTED);
-            int timeToDone = order.getLength() / taxiCar.getSpeed();
-            System.out.println("Order starts, time to done " + timeToDone);
-            System.out.println("status - " + order.getStatus());
-            System.out.println("Order is done");
-            order.setStatus(Status.DONE);
-            isFree = true;
-        } else {
-            System.out.println("I'm busy");
-        }
+    public void setFree(boolean free) {
+        isFree = free;
     }
 
     public boolean isFree() {

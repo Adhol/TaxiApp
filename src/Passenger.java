@@ -3,7 +3,7 @@ public class Passenger {
     private TaxiClass taxiClass;
 
     public Passenger() {
-        this.length = 10 + (int) (Math.random() * 2000);
+        this.length = 50 + (int) (Math.random() * 2000);
         this.taxiClass = TaxiClass.getRandom();
     }
 
@@ -15,5 +15,11 @@ public class Passenger {
         return taxiClass;
     }
 
-
+    @Override
+    public String toString() {
+        return "Passenger{" +
+                "length=" + length +
+                ", taxiClass=" + taxiClass +
+                '}';
+    }
 }

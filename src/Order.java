@@ -5,24 +5,31 @@ public class Order {
     private double cost;
     private TaxiDriver taxiDriver;
     private Status status;
+    private double timeToDone;
+
+
 
     public Order(Passenger passenger, TaxiDriver taxiDriver) {
         this.length = passenger.getLength();
         this.taxiClass = passenger.getTaxiClass();
-        switch (taxiClass) {
-            case ECONOMY:
-                this.cost = length;
-                break;
-            case COMFORT:
-                this.cost = length * 2;
-                break;
-            case BUSINESS:
-                this.cost = length * 3;
-                break;
-        }
         this.taxiDriver = taxiDriver;
         this.status = Status.NEW;
+        this.cost = calculateCost(taxiClass);
+        this.timeToDone = length / (taxiDriver.getTaxiCar().getSpeed());
+        taxiDriver.setFree(false);
         Manager.numberOfOrder++;
+    }
+
+    private double calculateCost(TaxiClass taxiClass) {
+        cost = 0;
+        if(taxiClass == TaxiClass.ECONOMY) {
+            cost = length;
+        } else if(taxiClass == TaxiClass.COMFORT) {
+            cost = length * 2;
+        } else {
+            cost = length * 3;
+        }
+        return cost;
     }
 
     @Override
@@ -33,6 +40,10 @@ public class Order {
                 "\ncost - " + cost +
                 "\ntaxiDriver - " + taxiDriver +
                 "\nstatus - " + status;
+    }
+
+    public double getTimeToDone() {
+        return timeToDone;
     }
 
     public int getNumber() {

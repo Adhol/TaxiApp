@@ -1,26 +1,22 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Dispatcher {
+public class Dispatcher{
 
+    static List<TaxiDriver> listOfTaxiDrivers = new ArrayList<>();
 
-    public List<TaxiDriver> listOfTaxiDrivers = new ArrayList<>();
-
-    public void takeRequestFromPassenger(Passenger passenger) {
-        for (TaxiDriver taxiDriver : listOfTaxiDrivers) {
-            if(passenger.getTaxiClass() == (taxiDriver.getTaxiCar().getTaxiClass()) & taxiDriver.isFree()) {
-                System.out.println("create order");
-                Order order = new Order(passenger, taxiDriver);
-                System.out.println(order);
-                taxiDriver.completeOrder(order);
-                System.out.println("status - " + order.getStatus());
-                System.out.println();
-                Manager.listOfOrders.add(order);
-                return;
+    public void createOrder(List<Passenger> listOfPassengers) {
+        while(!listOfPassengers.isEmpty()) {
+            for (TaxiDriver taxiDriver : listOfTaxiDrivers) {
+                for (int i = 0; i < listOfPassengers.size(); i++) {
+                    if (taxiDriver.isFree() & taxiDriver.getTaxiCar().getTaxiClass() == listOfPassengers.get(i).getTaxiClass()) {
+                        Order order = new Order(listOfPassengers.get(i), taxiDriver);
+                        Manager.listOfOrders.add(order);
+                        Trip trip = new Trip(order);
+                        listOfPassengers.remove(i);
+                    }
+                }
             }
         }
     }
-
-
-
 }

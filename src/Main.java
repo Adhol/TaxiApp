@@ -1,23 +1,32 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
+
+        Dispatcher.listOfTaxiDrivers.add(new TaxiDriver("John", new TaxiDriver.TaxiCar("Lada", 30, TaxiClass.ECONOMY)));
+        Dispatcher.listOfTaxiDrivers.add(new TaxiDriver("Jim", new TaxiDriver.TaxiCar("Gaz", 35, TaxiClass.ECONOMY)));
+        Dispatcher.listOfTaxiDrivers.add(new TaxiDriver("Alex", new TaxiDriver.TaxiCar("Renault", 40, TaxiClass.COMFORT)));
+        Dispatcher.listOfTaxiDrivers.add(new TaxiDriver("Jane", new TaxiDriver.TaxiCar("Kia", 45, TaxiClass.COMFORT)));
+        Dispatcher.listOfTaxiDrivers.add(new TaxiDriver("Ben", new TaxiDriver.TaxiCar("Mercedes", 60, TaxiClass.BUSINESS)));
+        Dispatcher.listOfTaxiDrivers.add(new TaxiDriver("Karl", new TaxiDriver.TaxiCar("Audi", 60, TaxiClass.BUSINESS)));
+
+        Manager manager = new Manager();
+        manager.setReportStrategy(new TaxiClassReport());
         Dispatcher dispatcher = new Dispatcher();
-        TaxiDriver td1 = new TaxiDriver("John", new TaxiDriver.TaxiCar("Lada", 30, TaxiClass.ECONOMY));
-        TaxiDriver td2 = new TaxiDriver("Jim", new TaxiDriver.TaxiCar("Gaz", 35, TaxiClass.ECONOMY));
-        TaxiDriver td3 = new TaxiDriver("Alex", new TaxiDriver.TaxiCar("Renault", 40, TaxiClass.COMFORT));
-        TaxiDriver td4 = new TaxiDriver("Jane", new TaxiDriver.TaxiCar("Kia", 45, TaxiClass.COMFORT));
-        TaxiDriver td5 = new TaxiDriver("Ben", new TaxiDriver.TaxiCar("Mercedes", 60, TaxiClass.BUSINESS));
-        TaxiDriver td6 = new TaxiDriver("Karl", new TaxiDriver.TaxiCar("Audi", 60, TaxiClass.BUSINESS));
-        dispatcher.listOfTaxiDrivers.add(td1);
-        dispatcher.listOfTaxiDrivers.add(td2);
-        dispatcher.listOfTaxiDrivers.add(td3);
-        dispatcher.listOfTaxiDrivers.add(td4);
-        dispatcher.listOfTaxiDrivers.add(td5);
-        dispatcher.listOfTaxiDrivers.add(td6);
+        List<Passenger> listOfPassenger = new ArrayList<>();
 
         for (int i = 0; i < 10; i++) {
-            Passenger p = new Passenger();
-            dispatcher.takeRequestFromPassenger(p);
+            listOfPassenger.add(new Passenger());
         }
-    }
 
+        dispatcher.createOrder(listOfPassenger);
+        manager.createReport();
+
+        manager.setReportStrategy(new TaxiDriverReport());
+        manager.createReport();
+
+
+
+    }
 }
