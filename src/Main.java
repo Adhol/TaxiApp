@@ -1,32 +1,29 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
 
-        Dispatcher.listOfTaxiDrivers.add(new TaxiDriver("John", new TaxiDriver.TaxiCar("Lada", 30, TaxiClass.ECONOMY)));
-        Dispatcher.listOfTaxiDrivers.add(new TaxiDriver("Jim", new TaxiDriver.TaxiCar("Gaz", 35, TaxiClass.ECONOMY)));
-        Dispatcher.listOfTaxiDrivers.add(new TaxiDriver("Alex", new TaxiDriver.TaxiCar("Renault", 40, TaxiClass.COMFORT)));
-        Dispatcher.listOfTaxiDrivers.add(new TaxiDriver("Jane", new TaxiDriver.TaxiCar("Kia", 45, TaxiClass.COMFORT)));
-        Dispatcher.listOfTaxiDrivers.add(new TaxiDriver("Ben", new TaxiDriver.TaxiCar("Mercedes", 60, TaxiClass.BUSINESS)));
-        Dispatcher.listOfTaxiDrivers.add(new TaxiDriver("Karl", new TaxiDriver.TaxiCar("Audi", 60, TaxiClass.BUSINESS)));
+        Dispatcher.listOfTaxi.add(new Taxi("Alex", Taxi.TaxiClass.ECONOMY));
+        Dispatcher.listOfTaxi.add(new Taxi("Jim", Taxi.TaxiClass.ECONOMY));
+        Dispatcher.listOfTaxi.add(new Taxi("John", Taxi.TaxiClass.COMFORT));
+        Dispatcher.listOfTaxi.add(new Taxi("Jane", Taxi.TaxiClass.COMFORT));
+        Dispatcher.listOfTaxi.add(new Taxi("Ben", Taxi.TaxiClass.BUSINESS));
+        Dispatcher.listOfTaxi.add(new Taxi("Karl", Taxi.TaxiClass.BUSINESS));
 
-        Manager manager = new Manager();
-        manager.setReportStrategy(new TaxiClassReport());
+        Manager manager = new Manager(new TaxiClassReport());
         Dispatcher dispatcher = new Dispatcher();
-        List<Passenger> listOfPassenger = new ArrayList<>();
 
         for (int i = 0; i < 10; i++) {
-            listOfPassenger.add(new Passenger());
+            Passenger p = new Passenger();
+            dispatcher.createOrder(p);
         }
 
-        dispatcher.createOrder(listOfPassenger);
-        manager.createReport();
+        for (Order order : dispatcher.listOfOrders) {
+            manager.mapOfOrders.put(order, order.getTaxi());
+        }
 
-        manager.setReportStrategy(new TaxiDriverReport());
-        manager.createReport();
+        //System.out.println("-------------REPORT----------------");
 
-
-
+        //manager.createReport();
     }
 }

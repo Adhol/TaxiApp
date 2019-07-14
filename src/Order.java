@@ -1,77 +1,94 @@
-public class Order {
-    private int number = Manager.numberOfOrder;
-    private int length;
-    private TaxiClass taxiClass;
-    private double cost;
-    private TaxiDriver taxiDriver;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+public class Order implements Subject{
+    private List<Observer> listOfObservers;
+    private Passenger passenger;
+    private Dispatcher dispatcher;
+    private final int routeLength;
+    private final Taxi taxi;
     private Status status;
-    private double timeToDone;
 
-
-
-    public Order(Passenger passenger, TaxiDriver taxiDriver) {
-        this.length = passenger.getLength();
-        this.taxiClass = passenger.getTaxiClass();
-        this.taxiDriver = taxiDriver;
-        this.status = Status.NEW;
-        this.cost = calculateCost(taxiClass);
-        this.timeToDone = length / (taxiDriver.getTaxiCar().getSpeed());
-        taxiDriver.setFree(false);
-        Manager.numberOfOrder++;
+    Order(Passenger passenger, Taxi taxi, Dispatcher dispatcher) {
+        this.listOfObservers = new ArrayList<>();
+        this.passenger = passenger;
+        this.dispatcher = dispatcher;
+        this.routeLength = passenger.getLength();
+        this.taxi = taxi;
+        this.status = Status.ACCEPTED;
     }
 
-    private double calculateCost(TaxiClass taxiClass) {
-        cost = 0;
-        if(taxiClass == TaxiClass.ECONOMY) {
-            cost = length;
-        } else if(taxiClass == TaxiClass.COMFORT) {
-            cost = length * 2;
-        } else {
-            cost = length * 3;
-        }
-        return cost;
+    void executeOrder() throws ExecutionException, InterruptedException {
+        CompletableFuture<Void> cf = CompletableFuture.runAsync(() -> {
+            registerObserver(passenger);
+            registerObserver(dispatcher);
+            taxi.setFree(false);
+            notifyObservers();
+            double time = getTimeToDone();
+            System.out.println("Order accepted by " + taxi.getDriverName());
+            System.out.println("Time to done: " + time);
+            System.out.println("Cost is " + getCost());
+            System.out.println("Execute order...");
+            try {
+                TimeUnit.SECONDS.sleep((long)(time * 0.5));
+                this.status = Status.DONE;
+                taxi.setFree(true);
+                notifyObservers();
+                System.out.println("Order is " + status);
+            } catch (InterruptedException e) {
+                throw new IllegalStateException(e);
+            }
+        });
+
+        cf.get();
+    }
+
+    private double getTimeToDone() {
+
+        return routeLength / 100 ;
+    }
+
+    private double getCost() {
+
+        return taxi.getTaxiClass().calculateCost(routeLength);
     }
 
     @Override
     public String toString() {
-        return "Order number - " + number +
-                "\nlength - " + length +
-                "\ntaxiClass - " + taxiClass +
-                "\ncost - " + cost +
-                "\ntaxiDriver - " + taxiDriver +
+        return  "routeLength - " + routeLength +
+                "\ntaxiClass - " + taxi.getTaxiClass() +
+                "\ntaxiDriver - " + taxi.getDriverName() +
                 "\nstatus - " + status;
     }
 
-    public double getTimeToDone() {
-        return timeToDone;
+    Taxi getTaxi() {
+        return taxi;
     }
 
-    public int getNumber() {
-        return number;
+    @Override
+    public void registerObserver(Observer observer) {
+        listOfObservers.add(observer);
     }
 
-    public int getLength() {
-        return length;
+    @Override
+    public void removeObserver(Observer observer) {
+        listOfObservers.remove(observer);
     }
 
-    public TaxiClass getTaxiClass() {
-        return taxiClass;
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : listOfObservers) {
+            observer.update(status);
+        }
     }
 
-    public double getCost() {
-        return cost;
-    }
-
-    public TaxiDriver getTaxiDriver() {
-        return taxiDriver;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
+    public enum Status {
+        NEW,
+        ACCEPTED,
+        DONE
     }
 }
 

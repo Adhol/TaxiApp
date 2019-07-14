@@ -1,5 +1,7 @@
-import java.util.List;
+import java.util.Map;
 
 public interface ReportStrategy {
-    void createReport(List<Order> listOfOrders);
+    void createReport(Map<Order, Taxi> MapOfOrders);
 }
+
+

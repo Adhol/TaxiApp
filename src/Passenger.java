@@ -1,25 +1,37 @@
-public class Passenger {
-    private int length;
-    private TaxiClass taxiClass;
+public class Passenger implements Observer {
+    private final int length;
+    private final Taxi.TaxiClass taxiClass;
+    private Order.Status status;
 
-    public Passenger() {
-        this.length = 50 + (int) (Math.random() * 2000);
-        this.taxiClass = TaxiClass.getRandom();
+    Passenger() {
+        this.length = 200 + (int) (Math.random() * 2000);
+        this.taxiClass = Taxi.TaxiClass.getRandomTaxiClass();
+        this.status = Order.Status.NEW;
     }
 
-    public int getLength() {
+    int getLength() {
         return length;
     }
 
-    public TaxiClass getTaxiClass() {
+    Taxi.TaxiClass getTaxiClass() {
         return taxiClass;
+    }
+
+    Order.Status getStatus() {
+        return status;
     }
 
     @Override
     public String toString() {
         return "Passenger{" +
-                "length=" + length +
-                ", taxiClass=" + taxiClass +
+                "length: " + length +
+                ", taxiClass: " + taxiClass +
+                ", status: " + status +
                 '}';
+    }
+
+    @Override
+    public void update(Order.Status status) {
+        this.status = status;
     }
 }

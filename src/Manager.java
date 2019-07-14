@@ -1,16 +1,16 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Manager {
     private ReportStrategy reportStrategy;
-    public static int numberOfOrder = 1;
-    public static List<Order> listOfOrders = new ArrayList<>();
+    Map<Order, Taxi> mapOfOrders;
 
-    public void createReport(){
-        reportStrategy.createReport(listOfOrders);
+    public Manager(ReportStrategy reportStrategy) {
+        this.reportStrategy = reportStrategy;
+        this.mapOfOrders = new HashMap<>();
     }
 
-    public void setReportStrategy(ReportStrategy reportStrategy) {
-        this.reportStrategy = reportStrategy;
+    public void createReport(){
+        reportStrategy.createReport(mapOfOrders);
     }
 }
