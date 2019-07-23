@@ -16,14 +16,14 @@ public class Main {
         Dispatcher.listOfTaxi.add(new Taxi("Ben", Taxi.TaxiClass.BUSINESS));
         Dispatcher.listOfTaxi.add(new Taxi("Karl", Taxi.TaxiClass.BUSINESS));
 
-        Manager manager = new Manager(new TaxiClassReport());
+        Manager manager = new Manager(new TaxiDriverReport());
         Dispatcher dispatcher = new Dispatcher();
         List<Passenger> listOfPassengers = new ArrayList<>();
 
         int maxTime = 0;
 
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 10; i++) {
             Passenger p = new Passenger();
             if ((p.getLength() / 100) > maxTime) {
                 maxTime = p.getLength() / 100;
@@ -46,9 +46,9 @@ public class Main {
         });
         cf.get();
 
-        //for (Passenger p : listOfPassengers) {
-        //    System.out.println(p);
-        //}
+        for (Passenger p : listOfPassengers) {
+            System.out.println(p);
+        }
 
         //TODO прошлый комментарий ->
         //TODO ты создаешь отчет, при этом некоторые заказы еще в обработке, те не завершены
