@@ -7,8 +7,6 @@ import java.util.concurrent.TimeUnit;
 public class Order implements Observable {
     private List<Observer> listOfObservers;
     private Passenger passenger;
-    private Dispatcher dispatcher;
-    private final int routeLength;
     private final Taxi taxi;
     private Status status;
 
@@ -24,10 +22,6 @@ public class Order implements Observable {
         taxi.setFree(false);
         notifyObservers();
         CompletableFuture<Void> cf = CompletableFuture.runAsync(() -> {
-            registerObserver(passenger);
-            registerObserver(dispatcher);
-            taxi.setFree(false);
-            notifyObservers();
             double time = getTimeToDone();
             System.out.println("Order accepted by " + taxi.getDriverName());
             System.out.println("Time to done: " + time);
@@ -43,8 +37,8 @@ public class Order implements Observable {
                 throw new IllegalStateException(e);
             }
         });
-
-        cf.get();
+        //TODO нам нет необходимости ждать. если мы исправим цикл формирования заказов
+        //cf.get();
     }
 
     private double getTimeToDone() {
@@ -52,9 +46,9 @@ public class Order implements Observable {
         return passenger.getLength() / 100 ;
     }
 
-    private double getCost() {
-
-        return taxi.getTaxiClass().calculateCost(routeLength);
+    double getCost() {
+        //TODO отлично, стратегия!
+        return taxi.getTaxiClass().calculateCost(passenger.getLength());
     }
 
     @Override

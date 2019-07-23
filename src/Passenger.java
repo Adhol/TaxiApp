@@ -1,5 +1,7 @@
 public class Passenger implements Observer {
+    //TODO сделать финальным
     private final int length;
+    //TODO сделать финальным
     private final Taxi.TaxiClass taxiClass;
     private Order.Status status;
 
@@ -17,7 +19,8 @@ public class Passenger implements Observer {
         return taxiClass;
     }
 
-    Order.Status getStatus() {
+    //TODO должен быть синхронизированным
+    synchronized Order.Status getStatus() {
         return status;
     }
 
@@ -30,6 +33,7 @@ public class Passenger implements Observer {
                 '}';
     }
 
+    //TODO должен быть синхронизированным
     @Override
     synchronized public void update(Order.Status status) {
         this.status = status;

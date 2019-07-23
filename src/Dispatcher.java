@@ -12,7 +12,9 @@ public class Dispatcher implements Observer{
     List<Order> listOfOrders = new ArrayList<>();
 
     void createOrder(Passenger passenger) throws ExecutionException, InterruptedException {
-        while (passenger.getStatus() != Order.Status.DONE) {
+        //TODO странно ожидать завершения ордера здесь, в цикле распределения
+        //TODO назначение заказа не должно ожидать его выполнение и блокировать основной поток
+        while (passenger.getStatus() == Order.Status.NEW) {
             for (Taxi taxi : listOfTaxi) {
                 if (passenger.getTaxiClass() == taxi.getTaxiClass() && taxi.isFree() && passenger.getStatus() == Order.Status.NEW) {
                     Order order = new Order(passenger, taxi);
@@ -26,6 +28,7 @@ public class Dispatcher implements Observer{
 
     }
 
+    //TODO почему не реализовано? связано с синхронным выполнением ордеров?
     @Override
     synchronized public void update(Order.Status status) {
     }

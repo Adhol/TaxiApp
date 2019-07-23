@@ -25,6 +25,12 @@ public class Main {
 
         for (int i = 0; i < 20; i++) {
             Passenger p = new Passenger();
+            if ((p.getLength() / 100) > maxTime) {
+                maxTime = p.getLength() / 100;
+            }
+            //TODO из-за ожидания на выполнении заказа они выполняются последовательно.
+            //TODO Поэтому некоторые таксии никогда не участвуют в выполнее
+            //TODO назначение заказа не должно ожидать его выполнение и блокировать основной поток
             dispatcher.createOrder(p);
             listOfPassengers.add(p);
         }
@@ -44,6 +50,10 @@ public class Main {
         //    System.out.println(p);
         //}
 
+        //TODO прошлый комментарий ->
+        //TODO ты создаешь отчет, при этом некоторые заказы еще в обработке, те не завершены
+        //TODO хотелось отчеты получить после выполнения всех заказов (заказы обрабатываются в отедльных потоках)
+        //TODO придумать решение как это сделать
         for (Order order : dispatcher.listOfOrders) {
             manager.mapOfOrders.put(order, order.getTaxi());
         }
