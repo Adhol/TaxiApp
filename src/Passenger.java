@@ -31,7 +31,7 @@ public class Passenger implements Observer {
     }
 
     @Override
-    public void update(Order.Status status) {
+    synchronized public void update(Order.Status status) {
         this.status = status;
     }
 }

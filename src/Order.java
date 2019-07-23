@@ -4,7 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class Order implements Subject{
+public class Order implements Observable {
     private List<Observer> listOfObservers;
     private Passenger passenger;
     private Dispatcher dispatcher;
@@ -12,16 +12,17 @@ public class Order implements Subject{
     private final Taxi taxi;
     private Status status;
 
-    Order(Passenger passenger, Taxi taxi, Dispatcher dispatcher) {
+    Order(Passenger passenger, Taxi taxi) {
         this.listOfObservers = new ArrayList<>();
         this.passenger = passenger;
-        this.dispatcher = dispatcher;
-        this.routeLength = passenger.getLength();
         this.taxi = taxi;
         this.status = Status.ACCEPTED;
     }
 
     void executeOrder() throws ExecutionException, InterruptedException {
+        registerObserver(passenger);
+        taxi.setFree(false);
+        notifyObservers();
         CompletableFuture<Void> cf = CompletableFuture.runAsync(() -> {
             registerObserver(passenger);
             registerObserver(dispatcher);
@@ -33,7 +34,7 @@ public class Order implements Subject{
             System.out.println("Cost is " + getCost());
             System.out.println("Execute order...");
             try {
-                TimeUnit.SECONDS.sleep((long)(time * 0.5));
+                TimeUnit.SECONDS.sleep((long)(time * 0.1));
                 this.status = Status.DONE;
                 taxi.setFree(true);
                 notifyObservers();
@@ -48,7 +49,7 @@ public class Order implements Subject{
 
     private double getTimeToDone() {
 
-        return routeLength / 100 ;
+        return passenger.getLength() / 100 ;
     }
 
     private double getCost() {
@@ -58,7 +59,7 @@ public class Order implements Subject{
 
     @Override
     public String toString() {
-        return  "routeLength - " + routeLength +
+        return  "routeLength - " + passenger.getLength() +
                 "\ntaxiClass - " + taxi.getTaxiClass() +
                 "\ntaxiDriver - " + taxi.getDriverName() +
                 "\nstatus - " + status;

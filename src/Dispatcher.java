@@ -14,19 +14,19 @@ public class Dispatcher implements Observer{
     void createOrder(Passenger passenger) throws ExecutionException, InterruptedException {
         while (passenger.getStatus() != Order.Status.DONE) {
             for (Taxi taxi : listOfTaxi) {
-                if (passenger.getTaxiClass() == taxi.getTaxiClass() && taxi.isFree()) {
-                    Order order = new Order(passenger, taxi, this);
-                    System.out.println(order);
+                if (passenger.getTaxiClass() == taxi.getTaxiClass() && taxi.isFree() && passenger.getStatus() == Order.Status.NEW) {
+                    Order order = new Order(passenger, taxi);
+                    order.registerObserver(this);
                     order.executeOrder();
                     listOfOrders.add(order);
-                    break;
                 }
             }
         }
 
+
     }
 
     @Override
-    public void update(Order.Status status) {
+    synchronized public void update(Order.Status status) {
     }
 }

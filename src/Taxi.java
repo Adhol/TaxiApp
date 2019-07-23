@@ -18,11 +18,15 @@ public class Taxi {
     }
 
     String getDriverName() {
+
         return driverName;
+
     }
 
     TaxiClass getTaxiClass() {
+
         return taxiClass;
+
     }
 
     @Override
@@ -54,7 +58,6 @@ public class Taxi {
             return values()[(int) (Math.random() * values().length)];
 
         }
-
 
     }
 }
