@@ -24,22 +24,20 @@ public class Order implements Observable {
 
         CompletableFuture<Void> cf = CompletableFuture.runAsync(() -> {
             double time = getTimeToDone();
-            System.out.println("Order accepted by " + taxi.getDriverName());
-            System.out.println("Time to done: " + time);
-            System.out.println("Cost is " + getCost());
-            System.out.println("Execute order...");
+            System.out.printf("Order %d accepted by %s" +
+                    "\nTime to done: %s" +
+                    "\nCost is %s" +
+                    "\nExecute order %d ...%n", hashCode(), taxi.getDriverName(), time, getCost(), hashCode());
             try {
                 TimeUnit.SECONDS.sleep((long)(time * 0.5));
                 this.status = Status.DONE;
                 taxi.setFree(true);
                 notifyObservers();
-                System.out.println("Order is " + status);
+                System.out.printf("Order %d is %s%n", hashCode(), status);
             } catch (InterruptedException e) {
                 throw new IllegalStateException(e);
             }
         });
-        //TODO нам нет необходимости ждать. если мы исправим цикл формирования заказов
-        //cf.get();
     }
 
     private double getTimeToDone() {

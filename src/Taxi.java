@@ -1,6 +1,6 @@
 public class Taxi {
-    private final String driverName; //TODO сделать финальным
-    private final TaxiClass taxiClass; //TODO сделать финальным
+    private final String driverName;
+    private final TaxiClass taxiClass;
     private boolean isFree;
 
     Taxi(String driverName, TaxiClass taxiClass) {
@@ -13,21 +13,16 @@ public class Taxi {
         isFree = free;
     }
 
-    //TODO должен быть синхронизованным иначе мы можем прочитать старое значение
     synchronized boolean isFree() {
         return isFree;
     }
 
     String getDriverName() {
-
         return driverName;
-
     }
 
     TaxiClass getTaxiClass() {
-
         return taxiClass;
-
     }
 
     @Override

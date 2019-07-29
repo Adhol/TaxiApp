@@ -7,12 +7,14 @@ import java.util.List;
 
 public class Dispatcher implements Observer{
 
+    //TODO а почему этот лист статический?
+    //Сделал статическим, чтобы использовать этот список без создания объекта диспетчера,
+    //например этот список используется в TaxiDriverReport, ну и плюс если добавятся еще диспетчеры,
+    //то список авто будет у них общий.
     static List<Taxi> listOfTaxi = new ArrayList<>();
     List<Order> listOfOrders = new ArrayList<>();
 
-    void createOrder(Passenger passenger) throws ExecutionException, InterruptedException {
-        //TODO странно ожидать завершения ордера здесь, в цикле распределения
-        //TODO назначение заказа не должно ожидать его выполнение и блокировать основной поток
+    void createOrder(Passenger passenger) {
         while (passenger.getStatus() == Order.Status.NEW) {
             for (Taxi taxi : listOfTaxi) {
                 if (passenger.getTaxiClass() == taxi.getTaxiClass() && taxi.isFree()) {
@@ -20,6 +22,7 @@ public class Dispatcher implements Observer{
                     order.registerObserver(this);
                     order.executeOrder();
                     listOfOrders.add(order);
+                    break;
                 }
             }
         }
@@ -27,7 +30,7 @@ public class Dispatcher implements Observer{
 
     }
 
-    //TODO почему не реализовано? связано с синхронным выполнением ордеров?
+    //TODO почему не реализовано? связано с синхронным выполнением ордеров? !!!
     @Override
     synchronized public void update(Order.Status status) {
     }
