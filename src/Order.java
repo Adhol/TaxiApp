@@ -1,12 +1,11 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class Order implements Observable {
     private List<Observer> listOfObservers;
-    private Passenger passenger;
+    private final Passenger passenger;
     private final Taxi taxi;
     private Status status;
 
@@ -15,12 +14,14 @@ public class Order implements Observable {
         this.passenger = passenger;
         this.taxi = taxi;
         this.status = Status.ACCEPTED;
+        registerObserver(passenger);
     }
 
-    void executeOrder() throws ExecutionException, InterruptedException {
-        registerObserver(passenger);
+    void executeOrder() {
+
         taxi.setFree(false);
         notifyObservers();
+
         CompletableFuture<Void> cf = CompletableFuture.runAsync(() -> {
             double time = getTimeToDone();
             System.out.println("Order accepted by " + taxi.getDriverName());
@@ -28,7 +29,7 @@ public class Order implements Observable {
             System.out.println("Cost is " + getCost());
             System.out.println("Execute order...");
             try {
-                TimeUnit.SECONDS.sleep((long)(time * 0.1));
+                TimeUnit.SECONDS.sleep((long)(time * 0.5));
                 this.status = Status.DONE;
                 taxi.setFree(true);
                 notifyObservers();
@@ -47,8 +48,9 @@ public class Order implements Observable {
     }
 
     double getCost() {
-        //TODO отлично, стратегия!
+
         return taxi.getTaxiClass().calculateCost(passenger.getLength());
+
     }
 
     @Override

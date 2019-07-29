@@ -1,13 +1,13 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 public class Main {
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
+    public static void main(String[] args) {
 
-        final int timeToAllDone;
+        //Dispatcher.listOfTaxi.add(new Taxi("test1", Taxi.TaxiClass.ECONOMY));
+        //Dispatcher.listOfTaxi.add(new Taxi("test2", Taxi.TaxiClass.ECONOMY));
+        //Dispatcher.listOfTaxi.add(new Taxi("test3", Taxi.TaxiClass.ECONOMY));
+        //Dispatcher.listOfTaxi.add(new Taxi("test4", Taxi.TaxiClass.ECONOMY));
 
         Dispatcher.listOfTaxi.add(new Taxi("Alex", Taxi.TaxiClass.ECONOMY));
         Dispatcher.listOfTaxi.add(new Taxi("Jim", Taxi.TaxiClass.ECONOMY));
@@ -16,44 +16,33 @@ public class Main {
         Dispatcher.listOfTaxi.add(new Taxi("Ben", Taxi.TaxiClass.BUSINESS));
         Dispatcher.listOfTaxi.add(new Taxi("Karl", Taxi.TaxiClass.BUSINESS));
 
-        Manager manager = new Manager(new TaxiDriverReport());
+        Manager manager = new Manager(new TaxiClassReport());
         Dispatcher dispatcher = new Dispatcher();
         List<Passenger> listOfPassengers = new ArrayList<>();
-
-        int maxTime = 0;
 
 
         for (int i = 0; i < 10; i++) {
             Passenger p = new Passenger();
-            if ((p.getLength() / 100) > maxTime) {
-                maxTime = p.getLength() / 100;
-            }
-            //TODO из-за ожидания на выполнении заказа они выполняются последовательно.
-            //TODO Поэтому некоторые таксии никогда не участвуют в выполнее
-            //TODO назначение заказа не должно ожидать его выполнение и блокировать основной поток
             dispatcher.createOrder(p);
             listOfPassengers.add(p);
         }
 
-        timeToAllDone = maxTime;
+        //Ожидание выполнения всех заказов перед формированием отчета
 
-        CompletableFuture<Void> cf = CompletableFuture.runAsync(() -> {
-            try {
-                TimeUnit.SECONDS.sleep((long)(timeToAllDone));
-            } catch (InterruptedException e) {
-                throw new IllegalStateException(e);
+        for (int i = 0; i < listOfPassengers.size(); i++) {
+            if (listOfPassengers.get(i).getStatus() == Order.Status.DONE) {
+                listOfPassengers.remove(i);
+                i--;
+            } else {
+               i--;
             }
-        });
-        cf.get();
-
-        for (Passenger p : listOfPassengers) {
-            System.out.println(p);
         }
 
-        //TODO прошлый комментарий ->
-        //TODO ты создаешь отчет, при этом некоторые заказы еще в обработке, те не завершены
-        //TODO хотелось отчеты получить после выполнения всех заказов (заказы обрабатываются в отедльных потоках)
-        //TODO придумать решение как это сделать
+
+        //TODO лучше получать ордера напрямую из dispatcher, а не из какого-то общего списка
+        //dispatcher не может внутри себя получить доступ к mapOfOrders и сразу писать туда данные,
+        //чтобы это реализовать необходимо сделать mapOfOrders стаическим полем, в одной из прошлых реализаций
+        //сделали замечание, что у менеджера есть статические хранилища данных.
         for (Order order : dispatcher.listOfOrders) {
             manager.mapOfOrders.put(order, order.getTaxi());
         }

@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Класс Dispatcher принимает заявку от клиента(Passenger), ищет свободного водителя и создает заказ
@@ -16,7 +15,7 @@ public class Dispatcher implements Observer{
         //TODO назначение заказа не должно ожидать его выполнение и блокировать основной поток
         while (passenger.getStatus() == Order.Status.NEW) {
             for (Taxi taxi : listOfTaxi) {
-                if (passenger.getTaxiClass() == taxi.getTaxiClass() && taxi.isFree() && passenger.getStatus() == Order.Status.NEW) {
+                if (passenger.getTaxiClass() == taxi.getTaxiClass() && taxi.isFree()) {
                     Order order = new Order(passenger, taxi);
                     order.registerObserver(this);
                     order.executeOrder();

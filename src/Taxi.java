@@ -41,10 +41,11 @@ public class Taxi {
         COMFORT(2.0),
         BUSINESS(3.0);
 
-        double cost;
+        private double cost;
 
         TaxiClass(Double cost) {
             this.cost = cost;
+
 
         }
 

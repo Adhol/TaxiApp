@@ -1,7 +1,7 @@
 import java.util.HashMap;
 import java.util.Map;
 
-public class Manager {
+public class Manager{
     private ReportStrategy reportStrategy;
     Map<Order, Taxi> mapOfOrders;
 
