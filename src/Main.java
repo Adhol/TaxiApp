@@ -4,11 +4,6 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
 
-        //Dispatcher.listOfTaxi.add(new Taxi("test1", Taxi.TaxiClass.ECONOMY));
-        //Dispatcher.listOfTaxi.add(new Taxi("test2", Taxi.TaxiClass.ECONOMY));
-        //Dispatcher.listOfTaxi.add(new Taxi("test3", Taxi.TaxiClass.ECONOMY));
-        //Dispatcher.listOfTaxi.add(new Taxi("test4", Taxi.TaxiClass.ECONOMY));
-
         Dispatcher.listOfTaxi.add(new Taxi("Alex", Taxi.TaxiClass.ECONOMY));
         Dispatcher.listOfTaxi.add(new Taxi("Jim", Taxi.TaxiClass.ECONOMY));
         Dispatcher.listOfTaxi.add(new Taxi("John", Taxi.TaxiClass.COMFORT));
@@ -38,11 +33,6 @@ public class Main {
             }
         }
 
-
-        //TODO лучше получать ордера напрямую из dispatcher, а не из какого-то общего списка
-        //dispatcher не может внутри себя получить доступ к mapOfOrders и сразу писать туда данные,
-        //чтобы это реализовать необходимо сделать mapOfOrders стаическим полем, в одной из прошлых реализаций
-        //сделали замечание, что у менеджера есть статические хранилища данных.
         for (Order order : dispatcher.listOfOrders) {
             manager.mapOfOrders.put(order, order.getTaxi());
         }
